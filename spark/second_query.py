@@ -11,7 +11,7 @@ def get_date_close(start_close, start_date, end_close, end_date, op):
 
 def get_name_year_key(x):
     ticker, year = x[0].split('-')
-    return '{0}-{1}'.format(stocks[ticker], year)
+    return '{0}-{1}'.format(stocks.get(ticker, 'GNE'), year)
 
 
 def percentile_increase(start, end):
