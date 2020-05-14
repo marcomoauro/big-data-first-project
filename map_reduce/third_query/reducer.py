@@ -43,7 +43,7 @@ for key in dict.keys():
     lll_inc = percentage_variation(ticker_dict['2016']['last_quotation'], ticker_dict['2016']['first_quotation'])
     ll_inc = percentage_variation(ticker_dict['2017']['last_quotation'], ticker_dict['2017']['first_quotation'])
     l_inc = percentage_variation(ticker_dict['2018']['last_quotation'], ticker_dict['2018']['first_quotation'])
-    array += [[dict_stocks[key], [lll_inc, ll_inc, l_inc]]]
+    array += [[dict_stocks.get(key, 'GneGne'), [lll_inc, ll_inc, l_inc]]]
 
 companies_array = []
 for name, increments in groupby(sorted(array, key=itemgetter(0)), lambda x: x[0]):

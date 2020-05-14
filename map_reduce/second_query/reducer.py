@@ -14,7 +14,7 @@ t0 = time.time()
 # create dict with ticker like key and sector like value
 dict_stocks = {}
 
-cat = subprocess.Popen(["/home/federico/Programmi/hadoop/bin/hdfs", "dfs", "-cat", "/data/historical_stocks.csv"], stdout=subprocess.PIPE)
+cat = subprocess.Popen(["/home/marco/Documenti/hadoop/bin/hdfs", "dfs", "-cat", "input/historical_stocks.csv"], stdout=subprocess.PIPE)
 reader = csv.DictReader(cat.stdout)
 for row in reader:
     dict_stocks[row['ticker']] = row['sector']
@@ -23,7 +23,7 @@ dict = {}
 for line in sys.stdin:
     ticker, _, close, _, low, high, volume, date = line.strip().split(',')
 
-    dict_key = '{0}-{1}'.format(dict_stocks[ticker], date.split('-')[0])
+    dict_key = '{0}-{1}'.format(dict_stocks.get(ticker, 'GNE'), date.split('-')[0])
     ticker_dict = dict.setdefault(dict_key, {})
 
     # (a)
