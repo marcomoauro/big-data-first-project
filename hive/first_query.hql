@@ -1,4 +1,3 @@
-set hive.auto.convert.join = false;
 set hive.vectorized.execution.enabled = true;
 set hive.vectorized.execution.reduce.enabled = true;
 set hive.exec.dynamic.partition = true;
@@ -6,7 +5,6 @@ set hive.exec.dynamic.partition.mode = nonstrict;
 
 drop table tickers;
 drop table tickers_grouped;
-drop table tickers_results;
 
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, open FLOAT, close FLOAT, adjusted_close FLOAT, low FLOAT, high FLOAT, volume FLOAT, data DATE)
 ROW FORMAT DELIMITED
@@ -23,7 +21,6 @@ FROM tickers
 WHERE year(data) >= 2008
 GROUP BY ticker;
 
-CREATE TABLE IF NOT EXISTS tickers_results AS
 SELECT tg.ticker, (((t2.close - t1.close) / t1.close) * 100) as percentage_variation, tg.minor_price, tg.major_price, tg.average_volume
 FROM tickers_grouped tg
 JOIN tickers t1 ON tg.ticker = t1.ticker and tg.start_date = t1.data
