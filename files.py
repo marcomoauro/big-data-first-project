@@ -1,37 +1,32 @@
-import random
-
-source = '/home/hadoop/historical_stock_prices.csv'
-destRoot = '/mnt/'
-
-
-def files(flag):
-    percs = ['0.25', '0.50', '0.75']
-    for perc in percs:
-        destination = destRoot + 'historical_stock_prices-' + name(flag, perc) + '.csv'
-        rows = []
-        new_rows = []
-        with open(source, 'r') as f:
-            lines = f.readlines()
-            rows.append(lines[0])
-            for line in lines[1:]:
-                if flag:
-                    fields = line.strip().split(',')
-                    fields[0] = 'MR' + fields[0]
-                    fields = ','.join(fields)
-                    new_rows.append(fields)
-                if random.uniform(0, 1) < float(perc):
-                    rows.append(line)
-
-        with open(destination, 'a') as f:
-            for line in rows:
-                f.write(line)
-            for line in new_rows:
-                f.write(line + '\n')
+MULTIPLIERS = [2, 4, 8]
+SOURCE_STOCK_PRICES = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
+SOURCE_STOCKS = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
+DEST_ROOT = ''
 
 
-def name(flag, percentage):
-    return '1' + percentage.split('.')[1] if flag else percentage.split('.')[1]
+def files(input, multipliers):
+    for mult in multipliers:
+        print('work on ' + input + ' - ' + str(mult) + 'x')
+        destination = filename(mult, input)
+        with open(input, 'r') as input_file:
+            with open(destination, 'a') as dest_file:
+                lines = input_file.readlines()
+                dest_file.write(lines[0])
+                # all row of original file
+                for line in lines[1:]:
+                    dest_file.write(line)
+                # fake tickers
+                for i in range(mult - 1):
+                    for line in lines[1:]:
+                        fields = line.strip().split(',')
+                        fields[0] = 'MR' + str(i+2) + fields[0]
+                        fields = ','.join(fields)
+                        dest_file.write(fields + '\n')
 
 
-files(True)
-files(False)
+def filename(mult, input):
+    return DEST_ROOT + input.split('.')[0] + '-' + str(mult) + 'x.csv'
+
+
+files(SOURCE_STOCK_PRICES, MULTIPLIERS)
+files(SOURCE_STOCKS, [MULTIPLIERS[-1]])
