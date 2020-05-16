@@ -20,7 +20,10 @@ def plot(map_reduce_values, spark_values, hive_values, job, env):
     fig.savefig(filename(job, env), dpi=200)
 
 def filename(job, env):
-    return os.getcwd() + '/tmp/' + env + '_' + job + '.png'
+    tmp_dirpath = os.getcwd() + '/tmp/'
+    if not os.path.exists(tmp_dirpath):
+        os.makedirs(tmp_dirpath)
+    return tmp_dirpath + env + '_' + job + '.png'
 
 for env in DATA.keys():
     for job in DATA['local']['map_reduce'].keys():
