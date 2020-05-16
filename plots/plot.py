@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from plots.data import DATA
-
+import os
 
 def plot(map_reduce_values, spark_values, hive_values, job, env):
     ind = np.arange(10)
@@ -15,8 +15,12 @@ def plot(map_reduce_values, spark_values, hive_values, job, env):
 
     plt.xticks(ind + width, ('25%', '50%', '75%', '100%', '125%', '150%', '175%', '200%', '400%', '800%'))
     plt.legend(loc='best')
-    plt.show()
+    fig = plt.gcf()
+    plt.close()
+    fig.savefig(filename(job, env), dpi=200)
 
+def filename(job, env):
+    return os.getcwd() + '/tmp/' + env + '_' + job + '.png'
 
 for env in DATA.keys():
     for job in DATA['local']['map_reduce'].keys():
