@@ -1,9 +1,3 @@
-set hive.auto.convert.join = true;
-set mapred.compress.map.output=true;
-set hive.exec.parallel=true;
-set hive.cli.print.header=true;
-
-
 CREATE TABLE IF NOT EXISTS stock_prices
 (
     ticker      STRING,
@@ -18,9 +12,9 @@ CREATE TABLE IF NOT EXISTS stock_prices
     ROW FORMAT DELIMITED
         FIELDS TERMINATED BY ','
     STORED AS TEXTFILE
-    LOCATION '/home/federico/Universita/bd/primo-progetto/data/historical_stock_prices.csv';
+    LOCATION 'historical_stock_prices.csv';
 
-LOAD DATA LOCAL INPATH '/home/federico/Universita/bd/primo-progetto/data/historical_stock_prices.csv'
+LOAD DATA LOCAL INPATH 'historical_stock_prices.csv'
     OVERWRITE INTO TABLE stock_prices;
 
 CREATE TABLE IF NOT EXISTS stocks
@@ -37,12 +31,12 @@ CREATE TABLE IF NOT EXISTS stocks
         "quoteChar" = "\"",
         "skip.header.line.count" = "1")
     STORED AS TEXTFILE
-    LOCATION '/home/federico/Universita/bd/primo-progetto/data/historical_stocks.csv';
-LOAD DATA LOCAL INPATH '/home/federico/Universita/bd/primo-progetto/data/historical_stocks.csv'
+    LOCATION 'historical_stocks.csv';
+LOAD DATA LOCAL INPATH 'historical_stocks.csv'
     OVERWRITE INTO TABLE stocks;
 
 
-CREATE TABLE IF NOT EXISTS minmaxdates3 AS
+CREATE TABLE IF NOT EXISTS minmaxdates AS
 SELECT YEAR(tickerdate) AS tickeryear, ticker, MIN(tickerdate) AS mindate, MAX(tickerdate) AS maxdate
 FROM stock_prices
 WHERE stock_prices.tickerdate >= '2016-01-01'
@@ -50,17 +44,17 @@ GROUP BY YEAR(tickerdate), ticker;
 
 CREATE TABLE IF NOT EXISTS minmaxdates_filtered AS
 SELECT m.ticker, m.tickeryear, m.mindate, m.maxdate
-FROM minmaxdates3 m
+FROM minmaxdates m
 JOIN
      (
          SELECT ticker, count(*) as count
-         FROM minmaxdates3
+         FROM minmaxdates
          GROUP BY ticker
      ) mc
      ON m.ticker = mc.ticker
 WHERE mc.count = 3;
 
-CREATE TABLE IF NOT EXISTS minmaxclose3 AS
+CREATE TABLE IF NOT EXISTS minmaxclose AS
 SELECT m.tickeryear,
        m.ticker,
        (((sp2.close - sp1.close) / sp1.close) * 100) AS percentile
@@ -70,7 +64,7 @@ FROM minmaxdates_filtered m
 
 CREATE TABLE IF NOT EXISTS percentiles_by_company AS
 SELECT s.name, m.tickeryear, ROUND(AVG(m.percentile)) AS percentile
-FROM minmaxclose3 m
+FROM minmaxclose m
 JOIN stocks s on m.ticker = s.ticker
 GROUP BY s.name, m.tickeryear
 ORDER BY s.name desc, m.tickeryear asc;

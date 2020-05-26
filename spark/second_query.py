@@ -11,7 +11,7 @@ def get_date_close(start_close, start_date, end_close, end_date, op):
 
 def get_name_year_key(x):
     ticker, year = x[0].split('-')
-    return '{0}-{1}'.format(stocks.get(ticker, 'GNE'), year)
+    return '{0}-{1}'.format(stocks.get(ticker, 'DN'), year)
 
 
 def percentile_increase(start, end):
@@ -20,8 +20,6 @@ def percentile_increase(start, end):
 
 t0 = time.time()
 session = pyspark.sql.SparkSession.builder.appName('second_query').getOrCreate()
-input1 = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
-input2 = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
 rows = session.read.csv(sys.argv[1], header=True).rdd.cache()
 stocks = session \
     .read.csv(sys.argv[2], header=True) \

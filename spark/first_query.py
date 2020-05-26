@@ -15,7 +15,6 @@ def percentual_increase(start, end):
 
 t0 = time.time()
 session = pyspark.sql.SparkSession.builder.appName('first_query').getOrCreate()
-input = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 rows = session.read.csv(sys.argv[1], header=True).rdd.cache() \
     .filter(lambda x: x['date'].split('-')[0] >= '2008') \
     .map(lambda x: (x['ticker'], ((float(x['close']), x['date']), (float(x['close']), x['date']),

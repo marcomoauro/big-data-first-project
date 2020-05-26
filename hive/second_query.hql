@@ -1,16 +1,10 @@
-set hive.auto.convert.join = true;
-set mapred.compress.map.output=true;
-set hive.exec.parallel=true;
-set hive.cli.print.header=true;
-
-
 CREATE TABLE IF NOT EXISTS stock_prices (ticker STRING, open FLOAT, close FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,tickerdate DATE)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION  '/home/federico/Universita/bd/primo-progetto/data/historical_stock_prices.csv';
+LOCATION  'historical_stock_prices.csv';
 
-LOAD DATA LOCAL INPATH '/home/federico/Universita/bd/primo-progetto/data/historical_stock_prices.csv'
+LOAD DATA LOCAL INPATH 'historical_stock_prices.csv'
 OVERWRITE INTO TABLE stock_prices;
 
 CREATE TABLE IF NOT EXISTS stocks (ticker STRING, exc STRING, name STRING, sector STRING, industry STRING)
@@ -20,8 +14,8 @@ WITH SERDEPROPERTIES (
    "quoteChar"     = "\"",
    "skip.header.line.count"="1")
    STORED AS TEXTFILE
-LOCATION  '/home/federico/Universita/bd/primo-progetto/data/historical_stocks.csv';
-LOAD DATA LOCAL INPATH '/home/federico/Universita/bd/primo-progetto/data/historical_stocks.csv'
+LOCATION  'historical_stocks.csv';
+LOAD DATA LOCAL INPATH 'historical_stocks.csv'
 OVERWRITE INTO TABLE stocks;
 
 

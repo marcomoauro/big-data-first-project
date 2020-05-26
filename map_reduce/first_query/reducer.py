@@ -14,8 +14,12 @@ VOLUME = 6  # numero di transizioni
 DATE = 7  # data nel formato aaaa-mm-gg
 
 t0 = time.time()
+
+# stocks è il dizionario che aggrega le informazioni a livello di ticker che poi utilizziamo
+# per il calcolo dei valori richiesti.
 stocks = {}
 
+# fase di inizializzazione della struttura stocks.
 for line in sys.stdin:
     line = line.strip()
     components = line.split(',')
@@ -58,6 +62,7 @@ for line in sys.stdin:
 
 results = []
 
+# calcolo della variazione della quotazione e del volume medio.
 for key, value in stocks.items():
     initialValue = value['firstDayClosePrice'][1]
     finalValue = value['lastDayClosePrice'][1]

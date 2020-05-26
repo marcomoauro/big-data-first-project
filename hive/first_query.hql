@@ -1,18 +1,10 @@
-set hive.vectorized.execution.enabled = true;
-set hive.vectorized.execution.reduce.enabled = true;
-set hive.exec.dynamic.partition = true;
-set hive.exec.dynamic.partition.mode = nonstrict;
-
-drop table tickers;
-drop table tickers_grouped;
-
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, open FLOAT, close FLOAT, adjusted_close FLOAT, low FLOAT, high FLOAT, volume FLOAT, data DATE)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION  '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stock_prices_quadruple.csv'
+LOCATION  'historical_stock_prices.csv'
 TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stock_prices_quadruple.csv'
+LOAD DATA LOCAL INPATH 'historical_stock_prices.csv'
 OVERWRITE INTO TABLE tickers;
 
 CREATE TABLE IF NOT EXISTS tickers_grouped AS

@@ -12,10 +12,10 @@ def get_date_close(start_close, start_date, end_close, end_date, op):
 
 def get_name_year_key(x):
     ticker, year = x[0].split('-')
-    return '{0}sep{1}'.format(stocks.get(ticker, 'GneGne'), year)
+    return '{0}sep{1}'.format(stocks.get(ticker, 'Default Name'), year)
 
 
-def increase(start, end):
+def variation_of_quotation(start, end):
     return ((end - start) / start) * 100
 
 
@@ -26,8 +26,6 @@ def percentiles_per_years(x):
 
 t0 = time.time()
 session = pyspark.sql.SparkSession.builder.appName('third_query').getOrCreate()
-input1 = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/small4_historical_stock_prices.csv'
-input2 = '/home/marco/Documenti/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
 rows = session.read.csv(sys.argv[1], header=True).rdd.cache()
 stocks = session \
     .read.csv(sys.argv[2], header=True) \
@@ -40,7 +38,7 @@ groups = rows.filter(lambda x: x['date'].split('-')[0] >= '2016') \
     .reduceByKey(lambda x, y: (get_date_close(x[0][0], x[0][1], y[0][0], y[0][1], lt),
                                get_date_close(x[1][0], x[1][1], y[1][0], y[1][1], gt))) \
     .map(lambda x: (get_name_year_key(x),
-                    (increase(x[1][0][0], x[1][1][0]), 1))) \
+                    (variation_of_quotation(x[1][0][0], x[1][1][0]), 1))) \
     .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1])) \
     .map(lambda x: (x[0].split('sep')[0], [(x[0].split('sep')[1], round(x[1][0] / x[1][1]))])) \
     .reduceByKey(lambda x, y: x + y) \
